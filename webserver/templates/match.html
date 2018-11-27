@@ -1,0 +1,50 @@
+<html>
+  <style>
+    body{
+      font-size: 15pt;
+      font-family: arial;
+    }
+  </style>
+{% if match_flag %}
+  <script>alert("Currently there is no good partners for you. Please wait and try again")</script>
+{% endif %}
+<body>
+    <h1>Study Mates Matching System</h1>
+
+    <p>Your Current Matched Partner</p>
+
+    {% for id in match_info.keys() %}
+        <p>Goal {{ id[0] }} {{ id[1] }}</p>
+        {% if not match_info[id] %}
+            <p>Not matched yet</p>
+            <form action="/match" method="POST">
+                <button name="match" value={{ id[0] }}>match</button>
+            </form>
+        {% else %}
+            <p>Partner account: {{ match_info[id][0] }}</p>
+            <p>Start date: {{ match_info[id][2] }}</p>
+            <p>End date: {{ match_info[id][3] }}</p>
+            <form action="/check" method="POST">
+                <button name="check" value={{ match_info[id][0] }}>check partner's profile</button>
+            </form>
+            <form action="/un_match" method="POST" onsubmit="return toValid()">
+                <button name="un_match" value={{ id[0] }}>un-match</button>
+            </form>
+        {% endif %}
+
+    {% endfor %}
+    <p><a href="/">Back</a></p>
+
+    <p><a href="/logout">Log out</a></p>
+
+<script>
+    function toValid(){
+        return confirm("Are you sure you want to un_match? You may loose 5 of your credits.")
+    }
+</script>
+
+
+</body>
+
+
+</html>

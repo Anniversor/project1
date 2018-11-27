@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+<select name="carlist" class="login-field" form="register">
+    <option value="" disabled selected>-- Select your gender --</option>
+        {% for school in data %}
+    <option value="{{ school }}">{{ school }}</option>
+    {% endfor %}
+<label class="login-field-icon fui-lock" for="login-pass"></label>
+</select>
+
+</body>
+</html>

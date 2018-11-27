@@ -1,0 +1,70 @@
+<html>
+  <style>
+    body{
+      font-size: 15pt;
+      font-family: arial;
+    }
+  </style>
+
+
+<body>
+    <h1>Study Mates Matching System</h1>
+
+    <h2>Your current preference</h2>
+    {% if not preference %}
+    <p>You don't have preference yet.</p>
+    {% else %}
+    <p>Same School: {{ preference[0] }}</p>
+    <p>Male or Female: {{ preference[1] }}</p>
+    <p>School Rank: {{ preference[2] }}</p>
+    {% endif %}
+
+    <h2>Edit Your preference</h2>
+    <form action="/setPreference" method="POST" id="Preference", onsubmit="return toValid()">
+        <select name="gender" class="login-field" form="Preference">
+            <option value="" disabled selected>-- your preferred gender --</option>
+            <option value="male">male</option>
+            <option value="female">female</option>
+        </select>
+        <select name="same_school" class="login-field" form="Preference">
+            <option value="" disabled selected>-- same school or not --</option>
+            <option value="True">Yes</option>
+            <option value="False">Nope</option>
+        </select>
+        <select name="rank" class="login-field" form="Preference">
+            <option value="" disabled selected>-- school rank (the smaller the better) --</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+        </select>
+        <input type="submit" value="set preference" class="btn btn-primary btn-large btn-block" >
+    </form>
+
+    <p><a href="/">Back</a></p>
+<script language="JavaScript">
+    function toValid(){
+        let val1 = document.getElementsByName("gender")[0].value;
+            if (val1==""){
+              alert("Gender not selected");
+              return false;
+            }
+        let val2 = document.getElementsByName("same_school")[0].value;
+            if (val2==""){
+              alert("Same_school not selected");
+              return false;
+            }
+        let val3 = document.getElementsByName("rank")[0].value;
+            if (val3==""){
+              alert("Rank not selected");
+              return false;
+            }
+        return true;
+    }
+</script>
+
+</body>
+
+
+</html>

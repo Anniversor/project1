@@ -1,0 +1,94 @@
+<html>
+  <style>
+    body{
+      font-size: 15pt;
+      font-family: arial;
+    }
+  </style>
+{% if flag %}
+  <script>alert("No match between these two user")</script>
+{% endif %}
+
+<body>
+    <h1>Study Mates Matching System</h1>
+
+    <h2>You are now in god mode</h2>
+    <h3>You can see every matches between any two users! </h3>
+    <form action="/get_matches" method="POST" onsubmit="return toValid1()">
+        <input type="text" id = "user1" name="user1" placeholder="user1's account">
+        <input type="text" id = "user2" name="user2" placeholder="user1's account">
+        <input type="submit" value="get">
+    </form>
+    {% if matches %}
+        <p>user1, user2, goal1, goal2, time_end, time_start</p>
+        {% for match in matches %}
+            <p>{{ match[0] }} {{ match[1] }} {{ match[2] }} {{ match[3] }} {{ match[4] }} {{ match[5] }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <h3>Delete whichever match you want!</h3>
+    <form action="/un_match_admin" method="POST" onsubmit="return toValid2()">
+        <input type="text" name="user1" placeholder="user1's account">
+        <input type="number" name="goal1" placeholder="user1's goal_id">
+        <input type="text" name="user2" placeholder="user1's account">
+        <input type="number" name="goal2" placeholder="user2's goal_id">
+        <input type="submit" value="delete">
+    </form>
+
+    <h3>Set a particular user's credit</h3>
+    <form action="/update_credit" method="POST" onsubmit="return toValid3()">
+        <input type="text" name="user_account" placeholder="user_account">
+        <input type="number" name="credit" placeholder="credit">
+        <input type="submit" value="update">
+    </form>
+
+    <p><a href="/logout">Log out</a></p>
+<script>
+    function toValid1(){
+        let val1 = document.getElementById('user1').value;
+        let val2 = document.getElementById('user2').value;
+        if(val1=="" || val2==""){
+            alert("please fill out all blanks");
+            return false
+        }
+        if(val1==val2){
+            alert("user1 and user2 should differ");
+            return false
+        }
+        return true
+    }
+
+    function toValid2(){
+        let val1 = document.getElementsByName('user1')[1].value;
+        let val2 = document.getElementsByName('goal1')[0].value;
+        let val3 = document.getElementsByName('user2')[1].value;
+        let val4 = document.getElementsByName('goal2')[0].value;
+        if(val1=="" || val2==""|| val3=="" || val4==""){
+            alert("please fill out all blanks");
+            return false
+        }
+        if(val2<0 || val4<0){
+            alert("goal_id should be greater than 0");
+            return false
+        }
+        return confirm("Are you sure you want to delete the match between these two users?")
+    }
+    function toValid3(){
+        let val1 = document.getElementsByName('user_account')[0].value;
+        let val2 = document.getElementsByName('credit')[0].value;
+        if(val1=="" || val2==""){
+            alert("please fill out all blanks");
+            return false
+        }
+        if(val2<=0 || val2>100){
+            alert("credit should be no less than 0 and no more than 100");
+            return false
+        }
+        return true
+    }
+</script>
+
+</body>
+
+
+</html>

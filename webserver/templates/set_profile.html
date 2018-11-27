@@ -1,0 +1,130 @@
+{% if flag == True %}
+<script >
+    alert("Email already exists! Please use another email.")
+</script>
+{% endif %}
+<html>
+  <link rel="stylesheet" href="../static/style.css">
+  <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+	<div class="login">
+		<div class="login-screen">
+			<div class="app-title">
+				<h1>Modify Profiles</h1>
+			</div>
+            <form action="/set_profile" method="POST" id="register" onsubmit="return toValid()">
+                <div class="login-form">
+
+                    <div class="control-group">
+                    <input type="text" class="login-field" value="" placeholder="nickname" name="nickname">
+                    <label class="login-field-icon fui-lock" for="login-pass"></label>
+                    </div>
+
+                    <div class="control-group">
+                    <input type="text" class="login-field" value="" placeholder="edu email" name="email">
+                    <label class="login-field-icon fui-lock" for="login-pass"></label>
+                    </div>
+
+                    <p>Birth Date</p>
+                    <div class="control-group">
+                    <input type="date" class="login-field" value="" placeholder="your birth date" name="birthdate">
+                    <label class="login-field-icon fui-lock" for="login-pass"></label>
+                    </div>
+
+                    <div class="control-group">
+                    <select name="gender" class="login-field" form="register">
+                        <option value="" disabled selected>-- Select your gender --</option>
+                          <option value="male">male</option>
+                          <option value="female">female</option>
+                    <label class="login-field-icon fui-lock" for="login-pass"></label>
+                    </select>
+                    </div>
+
+
+                    <div class="control-group">
+                        <select name="school" class="login-field" form="register" onchange="getDept();">
+                            <option value="" disabled selected>-- Select your university --</option>
+                              {% for school in schools %}
+                                <option value="{{ school }}">{{ school }}</option>
+                              {% endfor %}
+                        <label class="login-field-icon fui-lock" for="login-pass"></label>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <select name="department" class="login-field" form="register">
+                            <option value="" disabled selected>-- Select your department --</option>
+                        </select>
+                        <label class="login-field-icon fui-lock" for="login-pass"></label>
+                    </div>
+                    <div class="control-group">
+                        <select name="degree" class="login-field" form="register">
+                            <option value="" disabled selected>-- Select your degree --</option>
+                              <option value="BS">Undergraduate</option>
+                              <option value="Master">Master</option>
+                            <option value="Phd">Phd</option>
+                        </select>
+                        <label class="login-field-icon fui-lock" for="login-pass"></label>
+                    </div>
+                    <input type="submit" value="Update" class="btn btn-primary btn-large btn-block" >
+                    <br>
+                </div>
+            </form>
+		</div>
+	</div>
+  <script>
+      function getDept(){
+          let school = document.getElementsByName("school")[0].value;
+          $.post("/get_dept",{"school":school}).done(function(data){
+              let depts = data.depts;
+              let select = document.getElementsByName("department")[0];
+              for(i=select.length-1;i>=1;i--){
+                select.remove(i);
+                }
+                for(i=0;i<depts.length;i++){
+                    let opt = document.createElement('option');
+                    opt.value = depts[i];
+                    opt.innerHTML = depts[i];
+                    select.appendChild(opt);
+                }
+          });
+      }
+  </script>
+  <script language="javascript">
+      function toValid(){
+          let val3 = document.getElementsByName("birthdate")[0].value;
+
+          if (val3.toString() == ""){
+              alert("Please enter your birth date");
+              return false
+          }
+          let val4 = document.getElementsByName("gender")[0].value;
+          if (val4==""){
+              alert("please select your gender");
+              return false
+          }
+          let val5 = document.getElementsByName("school")[0].value;
+          if (val5==""){
+              alert("please select your university");
+              return false
+          }
+          let val6 = document.getElementsByName("department")[0].value;
+          if (val6==""){
+              alert("please select your department");
+              return false
+          }
+          let val7 = document.getElementsByName("degree")[0].value;
+          if (val7==""){
+              alert("please select your degree");
+              return false
+          }
+
+          let val8 = document.getElementsByName("email")[0].value;
+          let reg=/^\w+@[a-zA-Z0-9]{2,10}\.edu$/;
+          if (!reg.test(val8)){
+              alert("Edu email not right");
+              return false
+          }
+          return true;
+      }
+  </script>
+</html>

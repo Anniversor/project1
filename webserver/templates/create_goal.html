@@ -1,0 +1,172 @@
+<html>
+  <style>
+    body{
+      font-size: 15pt;
+      font-family: arial;
+    }
+  </style>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+
+<body>
+    <h1>Study Mates Matching System</h1>
+    <h2>Create A New Goal</h2>
+    <p>You can at most select 3 sections in one goal</p>
+    <form action="" method="POST" id="create_goal"  onsubmit="return toValid()">
+        <select name="test" class="login-field" form="create_goal" onchange="getSection();">
+            <option value="" disabled selected>-- select your test --</option>
+            {% for test in tests %}
+                <option value="{{ test }}">{{ test }}</option>
+            {% endfor %}
+        </select>
+        <input type="date"  placeholder="your completed date" name="completed_date">
+        <select name="section1" class="login-field" form="create_goal" onchange="getScore();">
+            <option value="" disabled selected>-- select your section --</option>
+
+        </select>
+        <select name="score1" class="login-field" form="create_goal">
+            <option value="" disabled selected>-- select your score --</option>
+
+        </select>
+
+    </form>
+    <button id="add_secton" onclick="add_section()">Add a new section</button>
+    <br>
+    <input id="submit" form="create_goal" type="submit" value="Create Goal" class="btn btn-primary btn-large btn-block" >
+<script>
+    section_count = 1;
+    function getSection(){
+
+        let test = document.getElementsByName("test")[0].value;
+        $.post("/get_section", {"test":test}).done(function(data)
+        {
+            let sections = data.sections;
+            let select1 = document.getElementsByName("section1")[0];
+            for(i=select1.length-1;i>=1;i--){
+                select1.remove(i);
+
+            }
+            for(i=0;i<sections.length;i++){
+                let opt = document.createElement('option');
+                opt.value = sections[i];
+                opt.innerHTML = sections[i];
+                select1.appendChild(opt);
+            }
+        });
+    }
+
+    function add_section(){
+        let test = document.getElementsByName("test")[0].value;
+        let section1 = document.getElementsByName("section"+section_count.toString())[0];
+
+        if(test== "" | section1.value ==""){
+            alert("Please fristly select your test and your other sections")
+        }
+        else if(section_count>=3){
+            alert("You can't have more than 3 sections in one goal. Try to use 'whole'.")
+        }
+        else{
+            let form = document.getElementById("create_goal");
+            new_section = document.createElement("select");
+            section_count = section_count +1;
+            new_section.setAttribute("name", "section"+(section_count).toString());
+            new_section.setAttribute("form", "create_goal");
+            new_section.setAttribute("onchange", "getScore();");
+            new_section.innerHTML = section1.innerHTML;
+            form.appendChild(new_section);
+        }
+    }
+</script>
+
+<script>
+    function getScore(){
+        let test = document.getElementsByName("test")[0].value;
+        let section = document.getElementsByName("section"+section_count.toString())[0];
+        let form = document.getElementById("create_goal");
+        $.post("/get_score", {"test":test, "section": section.value}).done(function(data){
+            let score = data.score;
+            var select_score;
+            console.log(score);
+            if(section_count == 1){
+                select_score = document.getElementsByName("score1")[0];
+            }
+            else{
+                let element = document.getElementsByName("score"+section_count.toString())[0];
+                if(typeof element !='undefined')
+                    form.removeChild(element);
+                select_score = document.createElement("select");
+                select_score.setAttribute("name", "score"+section_count.toString());
+                select_score.setAttribute("form", "create_goal");
+                let default_opt = document.createElement("option");
+                default_opt.value = "";
+                default_opt.disableSelection = true;
+                default_opt.innerHTML = "-- select your score --";
+                select_score.appendChild(default_opt);
+
+            }
+            for(i=select_score.length-1;i>=1;i--){
+                select_score.remove(i)
+            }
+            if(score<=100){
+                for(i=Math.floor(score/2);i<=score;i++){
+                    opt = document.createElement('option');
+                    opt.value = i.toString();
+                    opt.innerHTML = i.toString();
+                    select_score.appendChild(opt)
+                }
+            }
+            else if(score > 100 && score <400){
+                m = score / 10;
+                for(i=Math.floor(m * 0.7)*10;i<=score;i=i+5){
+                    opt = document.createElement('option');
+                    opt.value = i.toString();
+                    opt.innerHTML = i.toString();
+                    select_score.appendChild(opt)
+                }
+            }
+            else{
+                m = score/ 50;
+                for(i=Math.floor(m * 0.7)*50;i<=score;i=i+50){
+                    opt = document.createElement('option');
+                    opt.value = i.toString();
+                    opt.innerHTML = i.toString();
+                    select_score.appendChild(opt)
+                }
+            }
+            if(section_count!=1){
+                form.insertBefore(select_score, section.nextSibling);
+            }
+
+        });
+    }
+</script>
+<script>
+    function toValid(){
+        let val1 = document.getElementsByName("test")[0].value;
+        let val2 = document.getElementsByName("section1")[0].value;
+        let val3 = document.getElementsByName("score1")[0].value;
+        let val4 = document.getElementsByName("completed_date")[0].value;
+        let date1 = Date.parse(val4);
+        let today = new Date().toISOString().slice(0, 10);
+        let date2 = Date.parse(today);
+        let diffDays = parseInt((date1 - date2) / (1000 * 60 * 60 * 24));
+
+        console.log(diffDays);
+        if(val1=="" | val2=="" | val3==""){
+            alert("Please fill out your test, first section and score.");
+            return false;
+        }
+        else if(diffDays<=6){
+            alert("Please set a completed date that's no less than 7 days away.");
+            return false;
+        }
+        else{
+            return confirm("Are you sure you want to create the goal? Invalid sections except " +
+                "the first section will not be added to your goal.")
+        }
+    }
+</script>
+
+</body>
+
+
+</html>

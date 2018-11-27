@@ -1,0 +1,27 @@
+<html>
+  <style>
+    body{
+      font-size: 15pt;
+      font-family: arial;
+    }
+  </style>
+
+
+<body>
+    <h1>Study Mates Matching System</h1>
+
+    <h2>Here is your partner's profile, have fun~</h2>
+
+    {% for key in profile.keys() %}
+    <p>{{ key }}: {{ profile[key] }}</p>
+    {% endfor %}
+
+    <p><a href="/match">Back</a></p>
+    <p><a href="/logout">Log out</a></p>
+
+
+
+</body>
+
+
+</html>
