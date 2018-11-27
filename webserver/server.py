@@ -490,18 +490,19 @@ def admin_login():
         cursor = g.conn.execute("SELECT account, password FROM admin Where account = '%s';" % request.form['username'])
         rows = cursor.fetchall()
         if not rows:
-          flash("No such account exisits!")
+          print("No such account exisits!")
         else:
             password = rows[0][1]
             print(password)
             if password == request.form['password']:
                 session['logged_in'] = True
                 session['admin'] = True
-                session['account'] = request.form['account']
+                session['username'] = request.form['username']
+                cursor.close()
+                return render_template("admin.html")
             else:
                 flash("Wrong password!")
-        cursor.close()
-        return render_template("admin.html")
+        return redirect("/login")
     else:
         return render_template("login.html")
 @app.route('/un_match_admin', methods=['POST'])
