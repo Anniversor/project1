@@ -92,9 +92,16 @@
   <script language="javascript">
       function toValid(){
           let val3 = document.getElementsByName("birthdate")[0].value;
-
+          let date1 = Date.parse(val3);
+          let today = new Date().toISOString().slice(0, 10);
+          let date2 = Date.parse(today);
+          let diffYears = parseInt((date2 - date1) / (1000 * 60 * 60 * 24 * 365));
           if (val3.toString() == ""){
               alert("Please enter your birth date");
+              return false
+          }
+          if (diffYears<=14 || diffYears>=100){
+              alert("Please make sure you are order than 14 and younger than 100.");
               return false
           }
           let val4 = document.getElementsByName("gender")[0].value;
